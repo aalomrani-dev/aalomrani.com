@@ -88,6 +88,10 @@
 .kp-dots-drift { animation: kp-dots 26s var(--ease-inout) infinite alternate; }
 @keyframes kp-dots { to { transform: translate(8px, 6px); } }
 
+/* ---- hero aurora: slow breathing glow behind the welcome text ---- */
+.kp-hero-aura { animation: kp-hero-aura 17s var(--ease-inout) infinite alternate; will-change: transform; }
+@keyframes kp-hero-aura { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(20px, -16px, 0) scale(1.16); } }
+
 /* ---- modal / dialog entrance ---- */
 @keyframes kp-fade { from { opacity: 0; } }
 @keyframes kp-rise { from { opacity: 0; transform: translateY(14px) scale(.98); } }
@@ -107,5 +111,5 @@
     transition-duration: .001ms !important;
     scroll-behavior: auto !important;
   }
-  .kp-aurora, .kp-kenburns, .kp-dots-drift, .kp-sk::after { animation: none !important; }
+  .kp-aurora, .kp-kenburns, .kp-dots-drift, .kp-hero-aura, .kp-sk::after { animation: none !important; }
 }
