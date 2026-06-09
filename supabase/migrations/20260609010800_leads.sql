@@ -3,7 +3,8 @@
 -- template / guidance PDFs. anon may INSERT (shape-validated by CHECK
 -- constraints + a column-scoped grant); only the owner may read.
 -- Built to mirror the gating style of 0103_rls: grants are the outer gate,
--- RLS the real gate, owner reads via public.is_owner().
+-- RLS the real gate, owner reads via private.is_owner() (helpers live in the
+-- private schema after the advisor-hardening migration).
 
 -- ----------------------------------------------------------------------------
 -- Table
@@ -19,8 +20,9 @@ create table if not exists public.leads (
   user_agent  text,
   created_at  timestamptz not null default now(),
 
-  -- Shape + size guards. These apply to EVERY insert (unbypassable), so the
-  -- RLS insert policy can stay a simple `with check (true)`.
+  -- Shape + size guards. These apply to EVERY insert (unbypassable); the RLS
+  -- insert policy below additionally re-checks email validity (clears advisor
+  -- 0024 "RLS policy always true").
   constraint leads_email_len     check (char_length(email) between 3 and 320),
   constraint leads_email_shape   check (email ~* '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'),
   constraint leads_name_len      check (full_name   is null or char_length(full_name)   <= 120),
@@ -38,9 +40,9 @@ create index if not exists leads_created_idx  on public.leads (created_at desc);
 create index if not exists leads_interest_idx on public.leads (interest);
 
 -- ----------------------------------------------------------------------------
--- Grants — column-scoped insert for the public; owner-gated read/delete.
--- anon can ONLY write the intended columns (id is identity, created_at defaults),
--- so created_at / id cannot be spoofed.
+-- Grants. Supabase's default privileges already grant broadly to anon/auth, so
+-- RLS (default-deny, below) is the real gate. These explicit statements document
+-- the intended surface: public insert of the form columns; owner-gated read/delete.
 -- ----------------------------------------------------------------------------
 grant insert (email, full_name, interest, source_path, referrer, lang, user_agent)
   on public.leads to anon, authenticated;
@@ -55,14 +57,17 @@ alter table public.leads enable row level security;
 drop policy if exists leads_insert_public on public.leads;
 create policy leads_insert_public on public.leads
   for insert to anon, authenticated
-  with check (true);
+  with check (
+    char_length(email) between 3 and 320
+    and email ~* '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'
+  );
 
 drop policy if exists leads_select_owner on public.leads;
 create policy leads_select_owner on public.leads
   for select to authenticated
-  using (public.is_owner());
+  using (private.is_owner());
 
 drop policy if exists leads_delete_owner on public.leads;
 create policy leads_delete_owner on public.leads
   for delete to authenticated
-  using (public.is_owner());
+  using (private.is_owner());
