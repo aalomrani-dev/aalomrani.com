@@ -1,0 +1,111 @@
+/* ============================================================
+   Knowledge Platform — global stylesheet
+   Token layers (mapped into Tailwind via tailwind.config.js) +
+   DS base reset + motion/component classes.
+   ============================================================ */
+
+@import './styles/tokens/colors.css';
+@import './styles/tokens/typography.css';
+@import './styles/tokens/spacing.css';
+@import './styles/tokens/effects.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- DS base (Arabic-first, RTL) ---- */
+@layer base {
+  html { direction: rtl; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--text-body);
+    background: var(--bg-app);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  [lang='en'], .latin { font-family: var(--font-latin); direction: ltr; }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    color: var(--text-strong);
+    line-height: var(--lh-heading);
+    font-weight: var(--fw-bold);
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  a { color: var(--accent-strong); text-decoration: none; }
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+}
+
+/* ---- numerals ---- */
+.tnum { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ---- glass ---- */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  backdrop-filter: blur(var(--blur-md));
+  border: 1px solid var(--glass-border);
+}
+
+/* ---- bento / feature tile: hover lift + cursor-tracking glow ---- */
+.kp-tile {
+  transition: transform .3s var(--ease-out), box-shadow .3s var(--ease-out), border-color .3s var(--ease-out);
+}
+.kp-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--glow-teal);
+  border-color: var(--accent-soft);
+}
+.kp-tile:active { transform: translateY(-2px) scale(.995); }
+.kp-tile-glow {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%);
+  transition: opacity .35s var(--ease-out);
+}
+.kp-tile:hover .kp-tile-glow { opacity: 1; }
+
+/* ---- aurora (used on auth / decorative panels) ---- */
+.kp-aurora { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; }
+.kp-a1 { width: 520px; height: 520px; top: -160px; inset-inline-end: -80px; background: radial-gradient(circle, var(--teal-400), transparent 70%); animation: kp-drift1 18s var(--ease-inout) infinite alternate; }
+.kp-a2 { width: 460px; height: 460px; top: 40px; inset-inline-start: -120px; background: radial-gradient(circle, var(--navy-600), transparent 70%); animation: kp-drift2 22s var(--ease-inout) infinite alternate; }
+.kp-a3 { width: 300px; height: 300px; bottom: -120px; inset-inline-start: 40%; background: radial-gradient(circle, var(--sand-400), transparent 70%); opacity: .35; animation: kp-drift1 26s var(--ease-inout) infinite alternate; }
+@keyframes kp-drift1 { to { transform: translate(-40px, 40px) scale(1.1); } }
+@keyframes kp-drift2 { to { transform: translate(50px, -30px) scale(1.08); } }
+
+/* ---- hero photo: slow Ken-Burns drift ---- */
+.kp-kenburns { animation: kp-kenburns 24s var(--ease-inout) infinite alternate; will-change: transform; }
+@keyframes kp-kenburns { from { transform: scale(1.05); } to { transform: scale(1.13) translate3d(-1.5%, -1.5%, 0); } }
+
+/* ---- hero dotted texture: gentle drift ---- */
+.kp-dots-drift { animation: kp-dots 26s var(--ease-inout) infinite alternate; }
+@keyframes kp-dots { to { transform: translate(8px, 6px); } }
+
+/* ---- modal / dialog entrance ---- */
+@keyframes kp-fade { from { opacity: 0; } }
+@keyframes kp-rise { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+
+/* ---- skeleton shimmer (loading states) ---- */
+.kp-sk { position: relative; overflow: hidden; background: var(--surface-inset); }
+.kp-sk::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-faint) 16%, transparent), transparent);
+  animation: kp-shimmer 1.4s infinite;
+}
+@keyframes kp-shimmer { 100% { transform: translateX(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .kp-aurora, .kp-kenburns, .kp-dots-drift, .kp-sk::after { animation: none !important; }
+}

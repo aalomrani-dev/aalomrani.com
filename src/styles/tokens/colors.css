@@ -1,0 +1,147 @@
+/* ============================================================
+   COLOR TOKENS — Knowledge Platform
+   Deep navy + teal + mint surfaces, warm sand accent.
+   WCAG AA contrast; never rely on color alone for state.
+   ============================================================ */
+
+:root {
+  /* ---- Brand primitives ---- */
+  --navy-900: #102530;
+  --navy-800: #163040;
+  --navy-700: #1B3A4B;   /* core deep navy */
+  --navy-600: #244C5F;
+  --navy-500: #2F6178;
+
+  --teal-700: #1F5B5B;
+  --teal-600: #236B6B;   /* deep teal */
+  --teal-500: #2E8B8B;   /* core teal accent */
+  --teal-400: #46A6A6;
+  --teal-300: #7CC4C4;
+  --teal-200: #B6DEDE;
+
+  --mint-100: #EAF2F2;   /* soft mint-tint surface */
+  --mint-50:  #F2F8F8;
+
+  --sand-600: #B8862F;
+  --sand-500: #CFA14A;   /* warm gold/sand accent — used sparingly */
+  --sand-400: #E0BC6E;
+  --sand-100: #F6ECD4;
+
+  /* ---- Warm neutrals ---- */
+  --ink-900: #14201F;    /* near-black text */
+  --ink-700: #2E3B3A;
+  --ink-500: #51625F;    /* muted text */
+  --ink-400: #6F807D;
+  --ink-300: #9AA8A5;
+
+  --paper-0:  #FFFFFF;
+  --paper-50: #FBFAF7;   /* warm off-white background */
+  --paper-100:#F4F2EC;
+  --line-200: #E4E7E3;
+  --line-300: #D3D9D6;
+
+  /* ---- Semantic — status (paired with icon, never color-only) ---- */
+  --success-600: #2C7A5B;
+  --success-100: #E0F1E8;
+  --warning-600: #B5791C;
+  --warning-100: #FBEFD6;
+  --error-600:   #B23A3A;
+  --error-100:   #F7E1E1;
+  --info-600:    #2E6F8B;
+  --info-100:    #E0EEF4;
+
+  /* ---- File-type accents ---- */
+  --file-pdf:  #C5462F;
+  --file-xlsx: #1F8A5B;
+  --file-pptx: #D08032;
+
+  /* ---- Section accents — each main area carries its own calm pastel theme
+     (matches the reference home page). Use for section headers, icon
+     circles, and tinted strips; pair with text so never color-only. ---- */
+  --sec-download:    #2E8B8B;   --sec-download-surface:    #E4F0F0;
+  --sec-library:     #6E5FA6;   --sec-library-surface:     #EDE9F6;
+  --sec-departments: #BE8E36;   --sec-departments-surface: #F6EEDB;
+  --sec-about:       #2E8B8B;   --sec-about-surface:       #E4F0F0;
+  --sec-agency:      #3E8E6F;   --sec-agency-surface:      #E2EFE9;
+
+  /* ============================================================
+     SEMANTIC ALIASES — light (default)
+     ============================================================ */
+  --bg-app:        var(--paper-50);
+  --bg-subtle:     var(--mint-50);
+  --surface-card:  var(--paper-0);
+  --surface-raised:var(--paper-0);
+  --surface-tint:  var(--mint-100);
+  --surface-inset: var(--paper-100);
+
+  --text-strong:   var(--ink-900);
+  --text-body:     var(--ink-700);
+  --text-muted:    var(--ink-500);
+  --text-faint:    var(--ink-400);
+  --text-on-accent:#FFFFFF;
+  --text-on-navy:  #EAF2F2;
+
+  --accent:        var(--teal-500);
+  --accent-strong: var(--teal-600);
+  --accent-soft:   var(--teal-200);
+  --brand:         var(--navy-700);
+  --brand-strong:  var(--navy-800);
+  --highlight:     var(--sand-500);
+
+  --border:        var(--line-200);
+  --border-strong: var(--line-300);
+  --focus-ring:    var(--teal-500);
+
+  /* Glass (light) */
+  --glass-bg:      rgba(255, 255, 255, 0.62);
+  --glass-border:  rgba(255, 255, 255, 0.55);
+  --glass-tint:    rgba(234, 242, 242, 0.5);
+}
+
+/* ============================================================
+   DARK MODE — navy/teal shines
+   Toggle by adding [data-theme="dark"] to <html> or any scope.
+   ============================================================ */
+[data-theme="dark"] {
+  --bg-app:        #0C1A22;
+  --bg-subtle:     #102530;
+  --surface-card:  #142A35;
+  --surface-raised:#193340;
+  --surface-tint:  #16323E;
+  --surface-inset: #0F2129;
+
+  --text-strong:   #EAF4F4;
+  --text-body:     #CBDBDB;
+  --text-muted:    #91A8A8;
+  --text-faint:    #6E8585;
+  --text-on-accent:#06171C;
+  --text-on-navy:  #EAF2F2;
+
+  --accent:        var(--teal-400);
+  --accent-strong: var(--teal-300);
+  --accent-soft:   #1C4147;
+  --brand:         var(--teal-400);
+  --brand-strong:  var(--teal-300);
+  --highlight:     var(--sand-400);
+
+  --border:        rgba(124, 196, 196, 0.16);
+  --border-strong: rgba(124, 196, 196, 0.28);
+  --focus-ring:    var(--teal-400);
+
+  --success-100: #103328;
+  --warning-100: #33270E;
+  --error-100:   #371B1B;
+  --info-100:    #102C38;
+
+  /* Section accents — dark surfaces */
+  --sec-download-surface:    #133036;
+  --sec-library-surface:     #221E33;
+  --sec-departments-surface: #2E2613;
+  --sec-about-surface:       #133036;
+  --sec-agency-surface:      #152E25;
+
+  /* Glass (dark) */
+  --glass-bg:      rgba(20, 42, 53, 0.55);
+  --glass-border:  rgba(124, 196, 196, 0.22);
+  --glass-tint:    rgba(46, 139, 139, 0.10);
+}
