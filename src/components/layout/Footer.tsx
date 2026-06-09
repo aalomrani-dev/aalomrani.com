@@ -12,12 +12,28 @@ export function Footer() {
         </p>
       </div>
       <div className="bg-app border-t border-line">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-8 py-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-8 py-4 flex items-center justify-between gap-x-6 gap-y-2 flex-wrap">
           <p className="text-xs text-faint latin" dir="ltr">© 2026 aalomrani . All Rights Reserved</p>
-          <span className="text-xs text-faint inline-flex items-center gap-1.5">
-            <Icon name="sparkles" size={13} />
-            {t('footer.qaAssistantSoon')}
-          </span>
+          <div className="inline-flex items-center gap-x-4 gap-y-2 flex-wrap">
+            <span className="text-xs text-faint inline-flex items-center gap-1.5">
+              <Icon name="sparkles" size={13} />
+              {t('footer.qaAssistantSoon')}
+            </span>
+            <span className="text-xs text-faint inline-flex items-center gap-1.5">
+              {t('footer.developedBy')}
+              <span aria-hidden="true">·</span>
+              <a
+                href="https://www.aiwithmo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-medium text-body hover:text-accentStrong transition latin"
+                dir="ltr"
+              >
+                Mohamed Khair
+                <Icon name="externalLink" size={11} />
+              </a>
+            </span>
+          </div>
         </div>
       </div>
     </footer>
