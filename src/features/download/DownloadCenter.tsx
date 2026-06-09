@@ -20,11 +20,15 @@ import type { FileItem } from '@/data/content'
 function FileListRow({ file, locked, onOpen, onDownload }: { file: FileItem; locked: boolean; onOpen: (f: FileItem) => void; onDownload: (f: FileItem) => void }) {
   const { t } = useTranslation()
   return (
-    <div
-      onClick={() => !locked && onOpen(file)}
-      className="flex items-center gap-4 p-3.5 rounded-[var(--radius-md)] bg-surface border border-line hover:border-accentSoft transition"
-      style={{ cursor: locked ? 'default' : 'pointer' }}
-    >
+    <div className="group relative flex items-center gap-4 p-3.5 rounded-[var(--radius-md)] bg-surface border border-line hover:border-accentSoft transition">
+      {!locked && (
+        <button
+          type="button"
+          onClick={() => onOpen(file)}
+          aria-label={file.title}
+          className="absolute inset-0 z-0"
+        />
+      )}
       <span className="grid place-items-center w-10 h-10 rounded-[var(--radius-sm)] bg-tint text-accentStrong shrink-0">
         <Icon name="file" size={20} />
       </span>
@@ -38,16 +42,18 @@ function FileListRow({ file, locked, onOpen, onDownload }: { file: FileItem; loc
       {locked ? (
         <Badge tone="neutral" icon="lock">{t('common.locked')}</Badge>
       ) : (
-        <IconButton
-          name="download"
-          label={t('common.download')}
-          variant="outline"
-          size={40}
-          onClick={(e) => {
-            e.stopPropagation()
-            onDownload(file)
-          }}
-        />
+        <span className="relative z-10">
+          <IconButton
+            name="download"
+            label={t('common.download')}
+            variant="outline"
+            size={40}
+            onClick={(e) => {
+              e.stopPropagation()
+              onDownload(file)
+            }}
+          />
+        </span>
       )}
     </div>
   )
@@ -134,10 +140,10 @@ export function DownloadCenter() {
               </button>
             )}
           </div>
-          <span className="text-sm text-muted hidden sm:inline tnum">{t('download.fileCount', { count: list.length })}</span>
+          <span className="text-sm text-muted hidden sm:inline tnum" aria-live="polite">{t('download.fileCount', { count: list.length })}</span>
           <div className="flex items-center gap-1 p-1 rounded-[var(--radius-sm)] bg-inset">
-            <IconButton name="grid" label={t('a11y.gridView')} size={36} active={view === 'grid'} onClick={() => setView('grid')} />
-            <IconButton name="list" label={t('a11y.listView')} size={36} active={view === 'list'} onClick={() => setView('list')} />
+            <IconButton name="grid" label={t('a11y.gridView')} size={40} active={view === 'grid'} onClick={() => setView('grid')} />
+            <IconButton name="list" label={t('a11y.listView')} size={40} active={view === 'list'} onClick={() => setView('list')} />
           </div>
         </div>
 

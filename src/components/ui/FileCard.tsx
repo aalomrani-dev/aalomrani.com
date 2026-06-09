@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import type { KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '@/components/ui/Icon'
 import { FileTypeChip } from '@/components/ui/FileTypeChip'
@@ -17,36 +15,22 @@ interface FileCardProps {
    (the visual analogue of the Supabase RLS gate). */
 export function FileCard({ file, locked = false, onOpen, onDownload }: FileCardProps) {
   const { t } = useTranslation()
-  const [hover, setHover] = useState(false)
-  const open = () => {
-    if (!locked) onOpen?.(file)
-  }
-  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (locked) return
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onOpen?.(file)
-    }
-  }
 
   return (
     <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onClick={open}
-      onKeyDown={onKey}
-      role={locked ? undefined : 'button'}
-      tabIndex={locked ? -1 : 0}
       aria-label={locked ? t('a11y.fileLocked', { title: file.title }) : file.title}
-      className="relative flex flex-col gap-3 p-5 rounded-[var(--radius-lg)] bg-surface border border-line overflow-hidden"
-      style={{
-        minHeight: 176,
-        cursor: locked ? 'default' : 'pointer',
-        boxShadow: hover && !locked ? 'var(--glow-teal)' : 'var(--shadow-sm)',
-        transform: hover && !locked ? 'translateY(-3px)' : 'none',
-        transition: 'transform .24s var(--ease-out), box-shadow .24s var(--ease-out)',
-      }}
+      className="group relative flex flex-col gap-3 p-5 rounded-[var(--radius-lg)] bg-surface border border-line overflow-hidden shadow-[var(--shadow-sm)] hover:-translate-y-[3px] hover:shadow-[var(--glow-teal)] focus-within:-translate-y-[3px] focus-within:shadow-[var(--glow-teal)] transition-[transform,box-shadow] duration-200"
+      style={{ minHeight: 176 }}
     >
+      {!locked && (
+        <button
+          type="button"
+          onClick={() => onOpen?.(file)}
+          aria-label={file.title}
+          className="absolute inset-0 z-0"
+        />
+      )}
+
       <div className="flex items-center justify-between">
         <span className="grid place-items-center w-11 h-11 rounded-[var(--radius-sm)] bg-tint text-accentStrong">
           <Icon name="file" size={22} />
@@ -76,12 +60,7 @@ export function FileCard({ file, locked = false, onOpen, onDownload }: FileCardP
             e.stopPropagation()
             onDownload?.(file)
           }}
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[var(--radius-sm)] bg-accent text-onAccent text-sm font-semibold w-fit"
-          style={{
-            opacity: hover ? 1 : 0,
-            transform: hover ? 'none' : 'translateY(6px)',
-            transition: 'opacity .24s var(--ease-out), transform .24s var(--ease-out)',
-          }}
+          className="relative z-10 inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[var(--radius-sm)] bg-accent text-onAccent text-sm font-semibold w-fit opacity-0 translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-[opacity,transform] duration-200"
         >
           <Icon name="download" size={16} />
           {t('common.download')}

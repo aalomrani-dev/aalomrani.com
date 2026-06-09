@@ -26,17 +26,21 @@ interface ToastProps {
 }
 
 export function Toast({ message, icon = 'download' }: ToastProps) {
-  if (!message) return null
   return (
-    <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 pointer-events-none">
-      <div
-        role="status"
-        className="pointer-events-auto inline-flex items-center gap-2.5 px-4 py-3 rounded-[var(--radius-md)] text-sm font-medium shadow-[var(--shadow-lg)]"
-        style={{ background: 'var(--navy-800)', color: 'var(--text-on-navy)' }}
-      >
-        <Icon name={icon} size={16} style={{ color: 'var(--highlight)' }} />
-        {message}
-      </div>
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 pointer-events-none"
+    >
+      {message && (
+        <div
+          className="pointer-events-auto inline-flex items-center gap-2.5 px-4 py-3 rounded-[var(--radius-md)] text-sm font-medium shadow-[var(--shadow-lg)]"
+          style={{ background: 'var(--navy-800)', color: 'var(--text-on-navy)' }}
+        >
+          <Icon name={icon} size={16} style={{ color: 'var(--highlight)' }} />
+          {message}
+        </div>
+      )}
     </div>
   )
 }

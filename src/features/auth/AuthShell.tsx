@@ -64,7 +64,7 @@ export function AuthShell({ title, subtitle, children, foot }: AuthShellProps) {
       </div>
 
       {/* form panel */}
-      <div className="flex flex-col justify-center px-6 py-12 md:px-16">
+      <main className="flex flex-col justify-center px-6 py-12 md:px-16">
         {/* mobile brand / back-home (brand panel is hidden below lg) */}
         <div className="lg:hidden flex items-center justify-between mb-10">
           <Link to="/" className="flex items-center gap-2.5" aria-label={t('a11y.home')}>
@@ -85,7 +85,7 @@ export function AuthShell({ title, subtitle, children, foot }: AuthShellProps) {
           {children}
           {foot}
         </div>
-      </div>
+      </main>
     </div>
   )
 }

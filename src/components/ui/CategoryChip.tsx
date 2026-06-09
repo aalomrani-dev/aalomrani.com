@@ -14,7 +14,7 @@ export function CategoryChip({ children, active = false, count, onClick }: Categ
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className="inline-flex items-center gap-2 h-9 px-4 rounded-[var(--radius-pill)] text-sm font-medium whitespace-nowrap border transition-[background-color,color,transform] duration-200 active:scale-[.96]"
+      className="inline-flex items-center gap-2 h-10 px-4 rounded-[var(--radius-pill)] text-sm font-medium whitespace-nowrap border transition-[background-color,color,transform] duration-200 active:scale-[.96]"
       style={
         active
           ? { color: 'var(--text-on-accent)', background: 'var(--accent)', borderColor: 'transparent' }

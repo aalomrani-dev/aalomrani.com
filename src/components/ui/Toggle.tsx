@@ -42,7 +42,7 @@ export function Toggle({ checked, onChange, labelOn, labelOff, disabled = false,
       >
         <span
           className="absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white shadow-[var(--shadow-sm)]"
-          style={{ insetInlineStart: checked ? 23 : 3, transition: 'inset-inline-start .24s var(--ease-spring)' }}
+          style={{ insetInlineStart: checked ? 23 : 3, transition: 'inset-inline-start .24s var(--ease-out)' }}
         />
       </span>
       {labelOn && <span className={`text-sm font-semibold ${lbl(checked)}`}>{labelOn}</span>}

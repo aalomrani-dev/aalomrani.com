@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PreferencesProvider } from '@/lib/preferences'
@@ -12,11 +13,13 @@ import { Library } from '@/features/library/Library'
 import { Departments } from '@/features/pages/Departments'
 import { About } from '@/features/pages/About'
 import { Agency } from '@/features/pages/Agency'
-import { Login } from '@/features/auth/Login'
-import { Signup } from '@/features/auth/Signup'
-import { Reset } from '@/features/auth/Reset'
-import { Admin } from '@/features/admin/Admin'
 import { Placeholder } from '@/pages/Placeholder'
+
+// Owner-only + auth routes are code-split to shrink the guest bundle.
+const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
+const Signup = lazy(() => import('@/features/auth/Signup').then((m) => ({ default: m.Signup })))
+const Reset = lazy(() => import('@/features/auth/Reset').then((m) => ({ default: m.Reset })))
+const Admin = lazy(() => import('@/features/admin/Admin').then((m) => ({ default: m.Admin })))
 
 function AppLayout() {
   return (
@@ -37,6 +40,7 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTop />
+          <Suspense fallback={<div className="min-h-svh bg-app" />}>
           <Routes>
             {/* full-screen auth (own branding — no app header/footer) */}
             <Route path="/login" element={<Login />} />
@@ -58,6 +62,7 @@ export default function App() {
               />
             </Route>
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
     </PreferencesProvider>

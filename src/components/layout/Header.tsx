@@ -32,46 +32,64 @@ function Brand({ onClick }: { onClick: () => void }) {
 function RegTooltip({ onLogin, onSignup }: { onLogin: () => void; onSignup: () => void }) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLSpanElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        triggerRef.current?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
   return (
-    <span className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+    <span className="relative" ref={rootRef}>
       <button
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
-        onClick={onLogin}
+        ref={triggerRef}
+        onClick={() => setOpen((o) => !o)}
         aria-label={t('a11y.loginOrSignup')}
+        aria-expanded={open}
+        aria-haspopup="true"
         className="grid place-items-center w-10 h-10 rounded-full transition hover:brightness-95"
         style={{ color: 'var(--sec-download)', background: 'var(--sec-download-surface)' }}
       >
         <Icon name="userPlus" size={20} />
       </button>
-      <span
-        role="tooltip"
-        className="absolute z-50 w-[min(320px,calc(100vw-2rem))] p-4 rounded-[var(--radius-md)] bg-surface border border-line shadow-[var(--shadow-lg)] text-sm leading-relaxed text-body transition-all duration-200"
-        style={{
-          top: 'calc(100% + 12px)',
-          insetInlineEnd: 0,
-          opacity: open ? 1 : 0,
-          transform: open ? 'translateY(0)' : 'translateY(-6px)',
-          pointerEvents: open ? 'auto' : 'none',
-        }}
-      >
-        <span className="flex items-center gap-2 mb-2 font-display font-bold text-strong">
-          <Icon name="bell" size={16} style={{ color: 'var(--highlight)' }} />
-          {t('header.regTooltipTitle')}
+      {open && (
+        <span
+          className="absolute z-50 w-[min(320px,calc(100vw-2rem))] p-4 rounded-[var(--radius-md)] bg-surface border border-line shadow-[var(--shadow-lg)] text-sm leading-relaxed text-body"
+          style={{ top: 'calc(100% + 12px)', insetInlineEnd: 0 }}
+        >
+          <span className="flex items-center gap-2 mb-2 font-display font-bold text-strong">
+            <Icon name="bell" size={16} style={{ color: 'var(--highlight)' }} />
+            {t('header.regTooltipTitle')}
+          </span>
+          {t('download.regMessage')}
+          <span className="mt-3 block">
+            <Button size="sm" full onClick={onSignup}>
+              {t('common.signup')}
+            </Button>
+          </span>
+          <span className="mt-2 block text-center text-xs text-muted">
+            {t('header.haveAccount')}{' '}
+            <button onClick={onLogin} className="text-accentStrong font-semibold hover:underline">
+              {t('common.login')}
+            </button>
+          </span>
         </span>
-        {t('download.regMessage')}
-        <span className="mt-3 block">
-          <Button size="sm" full onClick={onSignup}>
-            {t('common.signup')}
-          </Button>
-        </span>
-        <span className="mt-2 block text-center text-xs text-muted">
-          {t('header.haveAccount')}{' '}
-          <button onClick={onLogin} className="text-accentStrong font-semibold hover:underline">
-            {t('common.login')}
-          </button>
-        </span>
-      </span>
+      )}
     </span>
   )
 }
@@ -194,7 +212,7 @@ export function Header() {
             {lang === 'ar' ? 'EN' : t('header.langToggleAr')}
           </button>
           <IconButton name={dark ? 'sun' : 'moon'} label={t('a11y.darkMode')} onClick={() => setDark(!dark)} />
-          <IconButton name={menuOpen ? 'x' : 'menu'} label={t('a11y.menu')} className="md:hidden" onClick={() => setMenuOpen((o) => !o)} />
+          <IconButton name={menuOpen ? 'x' : 'menu'} label={t('a11y.menu')} className="md:hidden" onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen} aria-controls="mobile-nav" />
         </div>
 
         {/* nav — centered */}
@@ -223,7 +241,7 @@ export function Header() {
       {/* mobile menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-line bg-surface">
-          <nav className="max-w-[1280px] mx-auto px-4 py-2 flex flex-col">
+          <nav id="mobile-nav" className="max-w-[1280px] mx-auto px-4 py-2 flex flex-col">
             {NAV_LINKS.map(({ key }) => (
               <button
                 key={key}

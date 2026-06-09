@@ -76,7 +76,7 @@ export function Hero() {
 
         {/* image */}
         <div className="relative min-h-[260px] lg:min-h-[460px] order-1 lg:order-2 overflow-hidden bg-tint">
-          <img src={heroImg} alt={t('a11y.heroImageAlt')} className="kp-kenburns absolute inset-0 w-full h-full object-cover" />
+          <img src={heroImg} alt={t('a11y.heroImageAlt')} fetchPriority="high" width={1280} height={960} className="kp-kenburns absolute inset-0 w-full h-full object-cover" />
           <span
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none"

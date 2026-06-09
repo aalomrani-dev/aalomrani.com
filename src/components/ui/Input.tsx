@@ -19,6 +19,7 @@ export function Input({ label, hint, error, icon, type = 'text', id, className =
   const isPassword = type === 'password'
   const inputType = isPassword && reveal ? 'text' : type
   const fid = id || (label ? `f-${label.replace(/\s+/g, '-')}` : undefined)
+  const msgId = fid ? `${fid}-msg` : undefined
   const borderColor = error ? 'var(--error-600)' : focused ? 'var(--accent)' : 'var(--border-strong)'
 
   return (
@@ -41,6 +42,8 @@ export function Input({ label, hint, error, icon, type = 'text', id, className =
           type={inputType}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={(error || hint) ? msgId : undefined}
           className="flex-1 w-full bg-transparent outline-none text-strong placeholder:text-faint min-w-0"
           {...rest}
         />
@@ -56,7 +59,7 @@ export function Input({ label, hint, error, icon, type = 'text', id, className =
         )}
       </span>
       {(error || hint) && (
-        <span className="text-xs" style={{ color: error ? 'var(--error-600)' : 'var(--text-muted)' }}>
+        <span id={msgId} role={error ? 'alert' : undefined} className="text-xs" style={{ color: error ? 'var(--error-600)' : 'var(--text-muted)' }}>
           {error || hint}
         </span>
       )}

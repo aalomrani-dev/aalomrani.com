@@ -55,7 +55,7 @@ export function Signup() {
       }
     >
       {sent ? (
-        <div className="rounded-[var(--radius-lg)] border border-line p-6 text-center" style={{ background: 'var(--success-100)' }}>
+        <div role="status" className="rounded-[var(--radius-lg)] border border-line p-6 text-center" style={{ background: 'var(--success-100)' }}>
           <span className="grid place-items-center w-12 h-12 rounded-full mx-auto mb-3" style={{ background: 'var(--success-600)', color: '#fff' }}>
             <Icon name="mail" size={24} />
           </span>

@@ -39,6 +39,7 @@ export function Button({
   const iconSize = size === 'sm' ? 16 : size === 'lg' ? 20 : 18
   return (
     <button
+      type="button"
       {...rest}
       className={`inline-flex items-center justify-center font-medium rounded-[var(--radius-md)] transition-[transform,background-color,box-shadow,border-color] duration-200 active:scale-[.97] disabled:opacity-50 disabled:pointer-events-none ${VARIANTS[variant]} ${SIZES[size]} ${full ? 'w-full' : ''} ${className}`}
       style={variant === 'sand' ? { background: 'var(--highlight)' } : undefined}

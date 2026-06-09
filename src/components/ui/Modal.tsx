@@ -87,7 +87,7 @@ export function Modal({ open, onClose, title, titleIcon, children, footer, width
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         className="w-full rounded-[var(--radius-lg)] bg-surface shadow-[var(--shadow-xl)] overflow-hidden outline-none"
-        style={{ maxWidth: width, border: '1px solid var(--glass-border)', animation: 'kp-rise .42s var(--ease-spring)' }}
+        style={{ maxWidth: width, border: '1px solid var(--glass-border)', animation: 'kp-rise .42s var(--ease-out)' }}
       >
         <div className="flex items-center justify-between gap-4 p-5 border-b border-line">
           <h3 className="font-display font-bold text-strong text-2xl flex items-center gap-2.5">

@@ -17,6 +17,8 @@ export function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  // Session-persistence wiring (remember vs session-only) lands with the Supabase session-config task.
+  const [remember, setRemember] = useState(true)
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
@@ -71,14 +73,20 @@ export function Login() {
           required
         />
         {error && (
-          <p className="flex items-center gap-2 text-sm" style={{ color: 'var(--error-600)' }}>
+          <p role="alert" className="flex items-center gap-2 text-sm" style={{ color: 'var(--error-600)' }}>
             <Icon name="lock" size={15} />
             {error}
           </p>
         )}
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm text-body cursor-pointer">
-            <input type="checkbox" className="accent-[var(--accent)]" />
+          <label htmlFor="remember" className="flex items-center gap-2 text-sm text-body cursor-pointer">
+            <input
+              id="remember"
+              type="checkbox"
+              className="accent-[var(--accent)]"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+            />
             {t('auth.login.rememberMe')}
           </label>
           <Link to="/reset" className="text-sm text-accentStrong font-medium hover:underline">

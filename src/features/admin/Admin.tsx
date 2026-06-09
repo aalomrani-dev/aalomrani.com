@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -94,6 +94,7 @@ function FileModal({
   const [cat, setCat] = useState(() => (initial && categories.includes(initial.cat) ? initial.cat : categories[0] ?? ''))
   const [fileObj, setFileObj] = useState<File | null>(null)
   const [over, setOver] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
   const { t } = useTranslation()
 
   if (!open) return null
@@ -133,6 +134,15 @@ function FileModal({
     >
       <form className="space-y-4" onSubmit={save}>
         <label
+          role="button"
+          tabIndex={0}
+          aria-label={t('admin.fileModal.dropzone')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              inputRef.current?.click()
+            }
+          }}
           onDragOver={(e) => {
             e.preventDefault()
             setOver(true)
@@ -151,9 +161,11 @@ function FileModal({
           }}
         >
           <input
+            ref={inputRef}
             type="file"
             accept=".pdf,.xlsx,.pptx"
-            className="hidden"
+            className="sr-only"
+            tabIndex={-1}
             onChange={(e) => {
               const f = e.target.files?.[0]
               if (f) accept(f)
@@ -266,38 +278,58 @@ function AdminFiles({
 
       <div className="rounded-[var(--radius-lg)] border border-line bg-surface overflow-hidden">
         <div className="overflow-x-auto">
-          <div style={{ minWidth: 620 }}>
-            <div className="grid grid-cols-[1fr_90px_130px_120px_92px] gap-3 px-5 py-3 border-b border-line bg-subtle text-xs font-semibold text-muted">
-              <span>{t('admin.files.colName')}</span>
-              <span>{t('admin.files.colType')}</span>
-              <span>{t('admin.files.colCat')}</span>
-              <span>{t('admin.files.colDate')}</span>
-              <span className="text-center">{t('admin.files.colActions')}</span>
-            </div>
-            {rows.map((f) => (
-              <div
-                key={f.id}
-                className="grid grid-cols-[1fr_90px_130px_120px_92px] gap-3 px-5 py-3.5 border-b border-line last:border-0 items-center hover:bg-subtle transition"
-              >
-                <span className="flex items-center gap-2.5 min-w-0">
-                  <Icon name="file" size={18} style={{ color: 'var(--text-muted)' }} />
-                  <span className="truncate font-medium text-strong">{f.title}</span>
-                </span>
-                <FileTypeChip type={f.type} size="sm" />
-                <span className="text-sm text-body truncate">{f.cat}</span>
-                <span className="text-sm text-muted font-mono tnum" dir="ltr">
-                  {f.date}
-                </span>
-                <span className="flex items-center justify-center gap-1">
-                  <IconButton name="edit" label={t('common.edit')} size={34} onClick={() => onEdit(f)} />
-                  <IconButton name="trash" label={t('common.delete')} size={34} onClick={() => onDelete(f)} />
-                </span>
-              </div>
-            ))}
-            {rows.length === 0 && (
-              <div className="px-5 py-12 text-center text-muted">{t('admin.files.empty')}</div>
-            )}
-          </div>
+          <table className="w-full border-collapse" style={{ minWidth: 620, tableLayout: 'fixed' }}>
+            <colgroup>
+              <col />
+              <col style={{ width: 90 }} />
+              <col style={{ width: 130 }} />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 92 }} />
+            </colgroup>
+            <thead>
+              <tr className="border-b border-line bg-subtle text-xs font-semibold text-muted">
+                <th scope="col" className="px-5 py-3 text-start font-semibold">{t('admin.files.colName')}</th>
+                <th scope="col" className="px-5 py-3 text-start font-semibold">{t('admin.files.colType')}</th>
+                <th scope="col" className="px-5 py-3 text-start font-semibold">{t('admin.files.colCat')}</th>
+                <th scope="col" className="px-5 py-3 text-start font-semibold">{t('admin.files.colDate')}</th>
+                <th scope="col" className="px-5 py-3 text-center font-semibold">{t('admin.files.colActions')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((f) => (
+                <tr key={f.id} className="border-b border-line last:border-0 hover:bg-subtle transition">
+                  <td className="px-5 py-3.5">
+                    <span className="flex items-center gap-2.5 min-w-0">
+                      <Icon name="file" size={18} style={{ color: 'var(--text-muted)' }} />
+                      <span className="truncate font-medium text-strong">{f.title}</span>
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <FileTypeChip type={f.type} size="sm" />
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <span className="block text-sm text-body truncate">{f.cat}</span>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <span className="block text-sm text-muted font-mono tnum" dir="ltr" style={{ textAlign: 'start' }}>
+                      {f.date}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <span className="flex items-center justify-center gap-1">
+                      <IconButton name="edit" label={t('common.edit')} size={40} onClick={() => onEdit(f)} />
+                      <IconButton name="trash" label={t('common.delete')} size={40} onClick={() => onDelete(f)} />
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-muted">{t('admin.files.empty')}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -338,7 +370,7 @@ function AdminCategories({
             <Badge tone="neutral">
               <span className="tnum">{t('admin.categories.fileCount', { count: c.count })}</span>
             </Badge>
-            <IconButton name="trash" label={t('admin.categories.deleteAria')} size={34} onClick={() => onDelete(c.id, c.label)} />
+            <IconButton name="trash" label={t('admin.categories.deleteAria')} size={40} onClick={() => onDelete(c.id, c.label)} />
           </div>
         ))}
       </div>
@@ -361,8 +393,8 @@ function AccessRow({ u, onApprove, onRemove }: { u: AccessUser; onApprove: (id: 
       {u.status === 'active' && <Badge tone="success" icon="check">{t('admin.access.statusActive')}</Badge>}
       {u.status === 'owner' && <Badge tone="accent" icon="shield">{t('admin.access.statusOwner')}</Badge>}
       {u.status === 'pending' && <Badge tone="warning" dot>{t('admin.access.statusPending')}</Badge>}
-      {u.status === 'pending' && <IconButton name="check" label={t('admin.access.approveAria')} size={34} onClick={() => onApprove(u.id)} />}
-      {u.status !== 'owner' && <IconButton name="trash" label={t('admin.access.removeAria')} size={34} onClick={() => onRemove(u.id)} />}
+      {u.status === 'pending' && <IconButton name="check" label={t('admin.access.approveAria')} size={40} onClick={() => onApprove(u.id)} />}
+      {u.status !== 'owner' && <IconButton name="trash" label={t('admin.access.removeAria')} size={40} onClick={() => onRemove(u.id)} />}
     </div>
   )
 }
@@ -508,6 +540,7 @@ export function Admin() {
   const [domainModal, setDomainModal] = useState(false)
   const [domainName, setDomainName] = useState('')
   const [domainError, setDomainError] = useState<string | null>(null)
+  const [confirm, setConfirm] = useState<{ title: string; body: string; onConfirm: () => void } | null>(null)
 
   const load = useCallback(async () => {
     setDataLoading(true)
@@ -767,12 +800,30 @@ export function Admin() {
                 downloads={downloads}
                 onUpload={() => setFileModal({ mode: 'new' })}
                 onEdit={(f) => setFileModal({ mode: 'edit', file: f })}
-                onDelete={deleteFile}
+                onDelete={(f) => setConfirm({ title: t('common.delete'), body: f.title, onConfirm: () => void deleteFile(f) })}
               />
             )}
-            {tab === 'categories' && <AdminCategories cats={catRows} onAdd={() => setCatModal(true)} onDelete={deleteCat} />}
+            {tab === 'categories' && (
+              <AdminCategories
+                cats={catRows}
+                onAdd={() => setCatModal(true)}
+                onDelete={(id, label) => setConfirm({ title: t('admin.categories.deleteAria'), body: label, onConfirm: () => void deleteCat(id, label) })}
+              />
+            )}
             {tab === 'access' && (
-              <AdminAccess users={users} domains={domains} openReg={openReg} onToggleOpenReg={toggleOpenReg} onToggleDomain={toggleDomain} onAddDomain={() => setDomainModal(true)} onApprove={approveUser} onRemove={removeUser} />
+              <AdminAccess
+                users={users}
+                domains={domains}
+                openReg={openReg}
+                onToggleOpenReg={toggleOpenReg}
+                onToggleDomain={toggleDomain}
+                onAddDomain={() => setDomainModal(true)}
+                onApprove={approveUser}
+                onRemove={(id) => {
+                  const u = users.find((x) => x.id === id)
+                  setConfirm({ title: t('admin.access.removeAria'), body: u?.name ?? u?.email ?? '', onConfirm: () => void removeUser(id) })
+                }}
+              />
             )}
             {tab === 'analytics' && <AdminAnalytics />}
           </>
@@ -844,6 +895,35 @@ export function Admin() {
             required
           />
         </form>
+      </Modal>
+
+      {/* delete confirmation */}
+      <Modal
+        open={!!confirm}
+        onClose={() => setConfirm(null)}
+        title={confirm?.title ?? ''}
+        titleIcon="trash"
+        footer={
+          <>
+            <Button
+              icon="trash"
+              onClick={() => {
+                confirm?.onConfirm()
+                setConfirm(null)
+              }}
+              style={{ background: 'var(--error-600)', color: '#fff' }}
+            >
+              {t('common.delete')}
+            </Button>
+            <Button variant="secondary" onClick={() => setConfirm(null)}>
+              {t('common.cancel')}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-body leading-relaxed">
+          <span className="font-semibold text-strong">{confirm?.body}</span>
+        </p>
       </Modal>
 
       <Toast message={toast} icon="check" />
