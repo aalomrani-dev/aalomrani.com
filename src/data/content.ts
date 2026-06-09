@@ -168,3 +168,7 @@ export function isAllowedEmail(email: string, domains: readonly string[]): boole
   const d = emailDomain(email)
   return d !== '' && domains.some((x) => x.toLowerCase() === d)
 }
+
+/* ---- Lead capture: interest options. Labels in ar.json lead.interests.<key>. ---- */
+export const LEAD_INTERESTS = ['templates', 'policies', 'guides', 'reports', 'all'] as const
+export type LeadInterest = (typeof LEAD_INTERESTS)[number]

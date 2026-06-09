@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { Icon } from '@/components/ui/Icon'
+import { Button } from '@/components/ui/Button'
+import { useLeadCapture } from '@/lib/leadCapture'
 
 export function Footer() {
   const { t } = useTranslation()
+  const { open } = useLeadCapture()
   return (
     <footer className="mt-20">
       <div className="relative overflow-hidden text-center px-6 py-7" style={{ background: 'var(--navy-800)' }}>
@@ -10,6 +13,11 @@ export function Footer() {
           <Icon name="sparkles" size={20} style={{ color: 'var(--highlight)' }} />
           {t('footer.tagline')}
         </p>
+        <div className="mt-5">
+          <Button variant="sand" icon="download" onClick={open}>
+            {t('footer.leadCta')}
+          </Button>
+        </div>
       </div>
       <div className="bg-app border-t border-line">
         <div className="max-w-[1280px] mx-auto px-6 md:px-8 py-4 flex items-center justify-between gap-x-6 gap-y-2 flex-wrap">
