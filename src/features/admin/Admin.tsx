@@ -370,6 +370,8 @@ function AccessRow({ u, onApprove, onRemove }: { u: AccessUser; onApprove: (id: 
 function AdminAccess({
   users,
   domains,
+  openReg,
+  onToggleOpenReg,
   onToggleDomain,
   onAddDomain,
   onApprove,
@@ -377,6 +379,8 @@ function AdminAccess({
 }: {
   users: AccessUser[]
   domains: DomainRow[]
+  openReg: boolean
+  onToggleOpenReg: () => void
   onToggleDomain: (d: DomainRow) => void
   onAddDomain: () => void
   onApprove: (id: string) => void
@@ -397,12 +401,29 @@ function AdminAccess({
         </div>
       </div>
 
+      {/* open registration */}
+      <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-5 mb-6">
+        <div className="flex items-center gap-3">
+          <span className="grid place-items-center w-10 h-10 rounded-[var(--radius-sm)] bg-tint text-accentStrong shrink-0">
+            <Icon name="userPlus" size={20} />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-strong">{t('admin.access.openRegTitle')}</p>
+            <p className="text-xs text-muted mt-0.5 leading-relaxed">{t('admin.access.openRegDesc')}</p>
+          </div>
+          <Toggle checked={openReg} onChange={onToggleOpenReg} ariaLabel={t('admin.access.openRegTitle')} />
+        </div>
+      </div>
+
       {/* allowed domains */}
       <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-5 mb-6">
         <p className="flex items-center gap-2 text-sm font-semibold text-strong mb-4">
           <Icon name="shield" size={16} style={{ color: 'var(--accent-strong)' }} />
           {t('admin.access.allowedDomains')}
         </p>
+        {openReg && (
+          <p className="text-xs mb-3" style={{ color: 'var(--warning-600)' }}>{t('admin.access.openRegBypass')}</p>
+        )}
         {domains.length === 0 ? (
           <p className="text-sm text-muted leading-relaxed">{t('admin.access.noDomains')}</p>
         ) : (
@@ -478,6 +499,7 @@ export function Admin() {
   const [users, setUsers] = useState<AccessUser[]>([])
   const [domains, setDomains] = useState<DomainRow[]>([])
   const [downloads, setDownloads] = useState(0)
+  const [openReg, setOpenReg] = useState(false)
 
   const [fileModal, setFileModal] = useState<{ mode: 'new' | 'edit'; file?: FileItem } | null>(null)
   const [savingFile, setSavingFile] = useState(false)
@@ -489,12 +511,13 @@ export function Admin() {
 
   const load = useCallback(async () => {
     setDataLoading(true)
-    const [catRes, fileRes, profRes, domRes, dlRes] = await Promise.all([
+    const [catRes, fileRes, profRes, domRes, dlRes, cfgRes] = await Promise.all([
       supabase.from('categories').select('id,label,sort_order').order('sort_order'),
       supabase.from('files').select('id,title,type,category_id,description,storage_path,size_bytes,file_date').order('file_date', { ascending: false }).order('id', { ascending: false }),
       supabase.from('profiles').select('id,email,full_name,role,status').order('created_at'),
       supabase.from('allowed_domains').select('id,domain,enabled').order('domain'),
       supabase.from('download_events').select('id', { count: 'exact', head: true }),
+      supabase.from('app_config').select('open_registration').eq('id', 1).maybeSingle(),
     ])
     const catList = (catRes.data as CatRow[] | null) ?? []
     const labelById = new Map(catList.map((c) => [c.id, c.label]))
@@ -510,6 +533,7 @@ export function Admin() {
     )
     setDomains((domRes.data as DomainRow[] | null) ?? [])
     setDownloads(dlRes.count ?? 0)
+    setOpenReg((cfgRes.data as { open_registration: boolean } | null)?.open_registration ?? false)
     setDataLoading(false)
   }, [])
 
@@ -652,6 +676,15 @@ export function Admin() {
     showToast(t('admin.toast.domainToggled'))
     await load()
   }
+  const toggleOpenReg = async () => {
+    const { error } = await supabase.from('app_config').update({ open_registration: !openReg }).eq('id', 1)
+    if (error) {
+      showToast(t('admin.toast.fileError'))
+      return
+    }
+    showToast(!openReg ? t('admin.toast.openRegOn') : t('admin.toast.openRegOff'))
+    await load()
+  }
 
   const approveUser = async (id: string) => {
     const { error } = await supabase.from('profiles').update({ status: 'active' }).eq('id', id)
@@ -739,7 +772,7 @@ export function Admin() {
             )}
             {tab === 'categories' && <AdminCategories cats={catRows} onAdd={() => setCatModal(true)} onDelete={deleteCat} />}
             {tab === 'access' && (
-              <AdminAccess users={users} domains={domains} onToggleDomain={toggleDomain} onAddDomain={() => setDomainModal(true)} onApprove={approveUser} onRemove={removeUser} />
+              <AdminAccess users={users} domains={domains} openReg={openReg} onToggleOpenReg={toggleOpenReg} onToggleDomain={toggleDomain} onAddDomain={() => setDomainModal(true)} onApprove={approveUser} onRemove={removeUser} />
             )}
             {tab === 'analytics' && <AdminAnalytics />}
           </>
