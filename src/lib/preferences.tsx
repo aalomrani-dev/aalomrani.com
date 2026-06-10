@@ -15,9 +15,8 @@ const PreferencesContext = createContext<Preferences | null>(null)
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState<boolean>(() => {
-    const saved = localStorage.getItem('kp-theme')
-    if (saved) return saved === 'dark'
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
+    // Light is the default; only honor an explicit saved choice (ignore the OS theme).
+    return localStorage.getItem('kp-theme') === 'dark'
   })
   const [lang, setLang] = useState<Lang>(() => (localStorage.getItem('kp-lang') as Lang) || 'ar')
 
