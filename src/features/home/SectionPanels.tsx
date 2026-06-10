@@ -147,7 +147,7 @@ function AgencyPanel({ s }: { s: SectionDef }) {
 export function DetailSections() {
   return (
     <section className="max-w-[1280px] mx-auto px-4 md:px-8 mt-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 items-stretch">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 items-stretch">
         {SECTIONS.map((s, i) => (
           <Reveal key={s.key} delay={i * 60} style={{ height: '100%' }}>
             {s.kind === 'download' ? (

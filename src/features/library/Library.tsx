@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '@/components/ui/Icon'
@@ -13,16 +13,21 @@ import { PageHero } from '@/components/layout/PageHero'
 import { useAuth } from '@/lib/auth'
 import { useFiles, categoryChips, downloadFile } from '@/lib/data'
 import { useFileGate } from '@/features/file/FileGate'
-import type { FileItem } from '@/data/content'
+import { OWNER, type FileItem } from '@/data/content'
 
 export function Library() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { user, isActiveMember } = useAuth()
+  const { user, isActiveMember, loading: authLoading } = useAuth()
   const { files, categories, loading } = useFiles()
   const { toast, showToast } = useToast()
   const gate = useFileGate()
   const [cat, setCat] = useState('all')
+
+  // A guest landing on the library gets the login popup (locked 5s).
+  useEffect(() => {
+    if (!authLoading && !user) gate.open()
+  }, [authLoading, user, gate])
 
   const list = files.filter((f) => cat === 'all' || f.cat === cat)
   const cats = categoryChips(files, categories, t('library.filterAll'))
@@ -134,6 +139,27 @@ export function Library() {
             )}
           </div>
         </div>
+
+        {/* contact note */}
+        <Reveal>
+          <div className="mt-10 flex items-start gap-4 p-5 rounded-[var(--radius-lg)] border border-line bg-surface">
+            <span className="grid place-items-center w-11 h-11 rounded-[var(--radius-md)] bg-tint text-accentStrong shrink-0">
+              <Icon name="mail" size={22} />
+            </span>
+            <div className="min-w-0">
+              <p className="font-semibold text-strong">{t('contact.heading')}</p>
+              <p className="text-sm text-body leading-relaxed mt-1">{t('contact.message')}</p>
+              <a
+                href={`mailto:${OWNER.email}`}
+                className="inline-flex items-center gap-1.5 mt-2.5 text-sm font-semibold text-accentStrong hover:underline latin"
+                dir="ltr"
+              >
+                <Icon name="mail" size={15} />
+                {OWNER.email}
+              </a>
+            </div>
+          </div>
+        </Reveal>
       </div>
 
       <Toast message={toast} />

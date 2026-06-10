@@ -18,7 +18,7 @@ export function FeatureCards() {
 
   return (
     <section className="max-w-[1280px] mx-auto px-4 md:px-8 mt-8">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {SECTIONS.map((s, i) => (
           <Reveal key={s.key} delay={i * 60}>
             <button

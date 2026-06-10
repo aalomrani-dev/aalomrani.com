@@ -110,7 +110,7 @@ export function Hero() {
             </Reveal>
             <Reveal delay={180}>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button icon="download" onClick={() => navigate('/download')}>
+                <Button icon="bookOpen" onClick={() => navigate('/library')}>
                   {t('home.hero.ctaBrowse')}
                 </Button>
                 <Button variant="secondary" onClick={() => navigate('/about')}>

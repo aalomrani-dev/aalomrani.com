@@ -14,11 +14,13 @@ interface ModalProps {
   children: ReactNode
   footer?: ReactNode
   width?: number
+  /* When false, hides the ✕ and ignores Esc + backdrop click (a forced-read gate). */
+  dismissible?: boolean
 }
 
 /* Centered dialog over a navy scrim. Glass-edged card, Esc to close,
    body scroll lock while open. Used for the admin upload / confirm flows. */
-export function Modal({ open, onClose, title, titleIcon, children, footer, width = 540 }: ModalProps) {
+export function Modal({ open, onClose, title, titleIcon, children, footer, width = 540, dismissible = true }: ModalProps) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDivElement>(null)
 
@@ -33,7 +35,7 @@ export function Modal({ open, onClose, title, titleIcon, children, footer, width
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        if (dismissible) onClose()
         return
       }
       // Trap Tab focus within the dialog.
@@ -64,13 +66,13 @@ export function Modal({ open, onClose, title, titleIcon, children, footer, width
       document.body.style.overflow = prevOverflow
       previouslyFocused?.focus?.()
     }
-  }, [open, onClose])
+  }, [open, onClose, dismissible])
 
   if (!open) return null
 
   return (
     <div
-      onClick={onClose}
+      onClick={dismissible ? onClose : undefined}
       className="fixed inset-0 z-[100] grid place-items-center p-5"
       style={{
         background: 'color-mix(in srgb, var(--navy-900) 55%, transparent)',
@@ -94,7 +96,7 @@ export function Modal({ open, onClose, title, titleIcon, children, footer, width
             {titleIcon && <Icon name={titleIcon} size={22} style={{ color: 'var(--accent-strong)' }} />}
             {title}
           </h3>
-          <IconButton name="x" label={t('common.close')} size={36} onClick={onClose} />
+          {dismissible && <IconButton name="x" label={t('common.close')} size={36} onClick={onClose} />}
         </div>
         <div className="p-5">{children}</div>
         {footer && <div className="flex gap-3 p-5 border-t border-line bg-subtle">{footer}</div>}

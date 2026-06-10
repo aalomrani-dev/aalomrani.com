@@ -7,7 +7,6 @@ import { ScrollToTop } from '@/lib/ScrollToTop'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Home } from '@/pages/Home'
-import { DownloadCenter } from '@/features/download/DownloadCenter'
 import { FileDetail } from '@/features/file/FileDetail'
 import { Library } from '@/features/library/Library'
 import { Departments } from '@/features/pages/Departments'
@@ -56,7 +55,6 @@ export default function App() {
 
             <Route element={<AppLayout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/download" element={<DownloadCenter />} />
               <Route path="/library" element={<Library />} />
               <Route path="/departments" element={<Departments />} />
               <Route path="/about" element={<About />} />

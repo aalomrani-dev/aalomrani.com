@@ -49,7 +49,7 @@ export function FileDetail() {
 
   const back = (
     <button
-      onClick={() => navigate('/download')}
+      onClick={() => navigate('/library')}
       className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-strong transition mb-6"
     >
       <Icon name="arrowLeft" size={16} />
@@ -104,7 +104,7 @@ export function FileDetail() {
           title={t('file.notFound.title')}
           note={t('file.notFound.note')}
           actionLabel={t('file.notFound.action')}
-          onAction={() => navigate('/download')}
+          onAction={() => navigate('/library')}
         />
       </div>
     )

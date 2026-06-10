@@ -61,6 +61,8 @@ export const DEPARTMENTS: Department[] = [
   { key: 'assetsEnablement', icon: 'layers' },
   { key: 'eduVouchers', icon: 'bookOpen' },
   { key: 'privatization', icon: 'target' },
+  { key: 'fundingSolutionsDev', icon: 'sparkles' },
+  { key: 'fundingSolutionsExec', icon: 'checkCircle' },
 ]
 
 /* A download-center file-type bullet: structural ft + i18n key segment.
@@ -89,22 +91,15 @@ export const SECTIONS: SectionDef[] = [
   { key: 'departments', route: 'departments', icon: 'building', accent: 'departments', kind: 'departments' },
   {
     key: 'library', route: 'library', icon: 'bookOpen', accent: 'library', kind: 'list',
-    listItems: ['regGuides', 'policies', 'procedures', 'regulations', 'processMaps', 'operationalGuides'],
-  },
-  {
-    key: 'download', route: 'download', icon: 'download', accent: 'download', kind: 'download',
-    fileItems: [
-      { key: 'pdf', ft: 'pdf' },
-      { key: 'templates' }, // no ft -> plain file icon (client: drop the Excel badge)
-    ],
+    listItems: ['regGuides', 'policies', 'procedures', 'regulations', 'processMaps'],
   },
 ]
 
 /* Hero count-up stats: structure + i18n key. Label -> t(`stats.${s.key}.label`). */
 export const STATS: { key: string; value: number; suffix: string }[] = [
   { key: 'files', value: 120, suffix: '+' },
-  { key: 'sections', value: 5, suffix: '' },
-  { key: 'departments', value: 6, suffix: '' },
+  { key: 'sections', value: 4, suffix: '' },
+  { key: 'departments', value: 8, suffix: '' },
 ]
 
 /* Nav links: route key only. Label -> t('nav.home') for home, else
@@ -114,7 +109,6 @@ export const NAV_LINKS: { key: RouteKey }[] = [
   { key: 'about' },
   { key: 'departments' },
   { key: 'library' },
-  { key: 'download' },
 ]
 
 /* ---- Auth: email field presentation (the real gate is server-side allowed_domains) ---- */
