@@ -30,11 +30,10 @@ export function About() {
             <Icon name="user" size={56} />
           )}
         </span>
-        <span className="mt-6 text-sm font-semibold text-accentStrong inline-flex items-center gap-2">
+        <h1 className="mt-6 text-sm font-semibold text-accentStrong inline-flex items-center gap-2">
           <Icon name="user" size={16} />
           {t('about.eyebrow')}
-        </span>
-        <h1 className="font-display font-bold text-strong text-4xl mt-2">{t('owner.name')}</h1>
+        </h1>
       </Reveal>
 
       <Reveal delay={120} className="mt-10 text-body leading-relaxed text-lg">
