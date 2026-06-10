@@ -64,10 +64,11 @@ export const DEPARTMENTS: Department[] = [
 ]
 
 /* A download-center file-type bullet: structural ft + i18n key segment.
-   Label -> t(`sections.download.fileItems.${item.key}`). */
+   Label -> t(`sections.download.fileItems.${item.key}`). Omit `ft` to render a
+   plain generic file icon instead of a file-type badge. */
 export interface DownloadFileItem {
   key: string
-  ft: FileType
+  ft?: FileType
 }
 
 export interface SectionDef {
@@ -83,24 +84,20 @@ export interface SectionDef {
 /* The five main areas — structure only (per-section accent + icon). All copy
    (title/blurb/intro/goal/item labels) is in ar.json under sections.<key>.* */
 export const SECTIONS: SectionDef[] = [
+  { key: 'agency', route: 'agency', icon: 'target', accent: 'agency', kind: 'agency' },
+  { key: 'about', route: 'about', icon: 'user', accent: 'about', kind: 'about' },
+  { key: 'departments', route: 'departments', icon: 'building', accent: 'departments', kind: 'departments' },
+  {
+    key: 'library', route: 'library', icon: 'bookOpen', accent: 'library', kind: 'list',
+    listItems: ['regGuides', 'policies', 'procedures', 'regulations', 'processMaps', 'operationalGuides'],
+  },
   {
     key: 'download', route: 'download', icon: 'download', accent: 'download', kind: 'download',
     fileItems: [
       { key: 'pdf', ft: 'pdf' },
-      { key: 'presentations', ft: 'pptx' },
-      { key: 'templates', ft: 'xlsx' },
-      { key: 'infographics', ft: 'pdf' },
-      { key: 'reports', ft: 'pdf' },
-      { key: 'shared', ft: 'xlsx' },
+      { key: 'templates' }, // no ft -> plain file icon (client: drop the Excel badge)
     ],
   },
-  {
-    key: 'library', route: 'library', icon: 'bookOpen', accent: 'library', kind: 'list',
-    listItems: ['regGuides', 'policies', 'procedures', 'regulations', 'approvedForms', 'processMaps', 'operationalGuides'],
-  },
-  { key: 'departments', route: 'departments', icon: 'building', accent: 'departments', kind: 'departments' },
-  { key: 'about', route: 'about', icon: 'user', accent: 'about', kind: 'about' },
-  { key: 'agency', route: 'agency', icon: 'target', accent: 'agency', kind: 'agency' },
 ]
 
 /* Hero count-up stats: structure + i18n key. Label -> t(`stats.${s.key}.label`). */
@@ -122,8 +119,8 @@ export const NAV_LINKS: { key: RouteKey }[] = [
 
 /* ---- Auth: email field presentation (the real gate is server-side allowed_domains) ---- */
 export const ORG = {
-  domain: 'aalomrani.com',
-  placeholder: 'name@aalomrani.com',
+  domain: 'moe.gov.sa',
+  placeholder: 'name@moe.gov.sa',
 } as const
 
 /* ---- About page: three capability highlights (icon + i18n key) ---- */

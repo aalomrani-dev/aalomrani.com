@@ -12,6 +12,7 @@ import { Toast, useToast } from '@/components/ui/Toast'
 import { PageHero } from '@/components/layout/PageHero'
 import { useAuth } from '@/lib/auth'
 import { useFiles, categoryChips, downloadFile } from '@/lib/data'
+import { useFileGate } from '@/features/file/FileGate'
 import type { FileItem } from '@/data/content'
 
 export function Library() {
@@ -20,13 +21,19 @@ export function Library() {
   const { user, isActiveMember } = useAuth()
   const { files, categories, loading } = useFiles()
   const { toast, showToast } = useToast()
+  const gate = useFileGate()
   const [cat, setCat] = useState('all')
 
   const list = files.filter((f) => cat === 'all' || f.cat === cat)
   const cats = categoryChips(files, categories, t('library.filterAll'))
-  const openFile = (f: FileItem) => navigate('/file/' + f.id)
+  // Browsing is open; the moment a guest opens or downloads a file, gate them.
+  const openFile = (f: FileItem) => {
+    if (!user) return gate.open()
+    navigate('/file/' + f.id)
+  }
   const download = async (f: FileItem) => {
-    const outcome = await downloadFile(f, user?.id ?? null)
+    if (!user) return gate.open()
+    const outcome = await downloadFile(f, user.id)
     if (outcome === 'ok') showToast(t('file.downloadStarted', { title: f.title }))
     else if (outcome === 'no-binary') showToast(t('file.noBinary'))
     else if (outcome === 'denied') showToast(t('file.denied'))
@@ -120,7 +127,7 @@ export function Library() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {list.map((f, i) => (
                   <Reveal key={f.id} delay={i * 50}>
-                    <FileCard file={f} locked={!isActiveMember} onOpen={openFile} onDownload={download} />
+                    <FileCard file={f} locked={false} onOpen={openFile} onDownload={download} />
                   </Reveal>
                 ))}
               </div>

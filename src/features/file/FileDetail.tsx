@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '@/components/ui/Icon'
@@ -10,6 +11,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Toast, useToast } from '@/components/ui/Toast'
 import { useAuth } from '@/lib/auth'
 import { useFiles, downloadFile } from '@/lib/data'
+import { useFileGate } from '@/features/file/FileGate'
 import type { FileItem } from '@/data/content'
 
 const FILE_COLOR = {
@@ -33,9 +35,15 @@ export function FileDetail() {
   const { t } = useTranslation()
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user, isActiveMember } = useAuth()
+  const { user, isActiveMember, loading: authLoading } = useAuth()
   const { files, loading } = useFiles()
   const { toast, showToast } = useToast()
+  const gate = useFileGate()
+
+  // Reading a file is gated: a guest landing here gets the login popup and no content.
+  useEffect(() => {
+    if (!authLoading && !user) gate.open()
+  }, [authLoading, user, gate])
 
   const file = files.find((f) => String(f.id) === id)
 
@@ -49,20 +57,40 @@ export function FileDetail() {
     </button>
   )
 
-  const openFile = (f: FileItem) => navigate('/file/' + f.id)
+  const openFile = (f: FileItem) => {
+    if (!user) return gate.open()
+    navigate('/file/' + f.id)
+  }
   const download = async (f: FileItem) => {
-    const outcome = await downloadFile(f, user?.id ?? null)
+    if (!user) return gate.open()
+    const outcome = await downloadFile(f, user.id)
     if (outcome === 'ok') showToast(t('file.downloadStarted', { title: f.title }))
     else if (outcome === 'no-binary') showToast(t('file.noBinary'))
     else if (outcome === 'denied') showToast(t('file.denied'))
     else showToast(t('file.downloadError'))
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="max-w-[1000px] mx-auto px-6 md:px-8 py-10">
         {back}
         <SkeletonGrid count={1} className="grid gap-4" />
+      </div>
+    )
+  }
+
+  // Guests can browse the catalog but not read a file — gate before any content.
+  if (!user) {
+    return (
+      <div className="max-w-[1000px] mx-auto px-6 md:px-8 py-10">
+        {back}
+        <EmptyState
+          icon="lock"
+          title={t('file.gateModal.title')}
+          note={t('file.gateModal.message')}
+          actionLabel={t('common.login')}
+          onAction={() => navigate('/login')}
+        />
       </div>
     )
   }
@@ -169,7 +197,7 @@ export function FileDetail() {
             <div className="grid gap-4 sm:grid-cols-3">
               {related.map((x, i) => (
                 <Reveal key={x.id} delay={i * 60}>
-                  <FileCard file={x} locked={!isActiveMember} onOpen={openFile} onDownload={download} />
+                  <FileCard file={x} locked={false} onOpen={openFile} onDownload={download} />
                 </Reveal>
               ))}
             </div>

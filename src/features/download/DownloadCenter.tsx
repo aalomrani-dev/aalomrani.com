@@ -15,7 +15,8 @@ import { Toast, useToast } from '@/components/ui/Toast'
 import { PageHero } from '@/components/layout/PageHero'
 import { useAuth } from '@/lib/auth'
 import { useFiles, categoryChips, downloadFile } from '@/lib/data'
-import type { FileItem } from '@/data/content'
+import { useFileGate } from '@/features/file/FileGate'
+import { OWNER, type FileItem } from '@/data/content'
 
 function FileListRow({ file, locked, onOpen, onDownload }: { file: FileItem; locked: boolean; onOpen: (f: FileItem) => void; onDownload: (f: FileItem) => void }) {
   const { t } = useTranslation()
@@ -64,6 +65,7 @@ export function DownloadCenter() {
   const navigate = useNavigate()
   const { user, isActiveMember } = useAuth()
   const { files, categories, loading } = useFiles()
+  const gate = useFileGate()
 
   const [q, setQ] = useState('')
   const [cat, setCat] = useState('all')
@@ -75,9 +77,14 @@ export function DownloadCenter() {
     (f) => (cat === 'all' || f.cat === cat) && (query === '' || f.title.includes(query) || f.cat.includes(query)),
   )
 
-  const openFile = (f: FileItem) => navigate('/file/' + f.id)
+  // Browsing is open; the moment a guest opens or downloads a file, gate them.
+  const openFile = (f: FileItem) => {
+    if (!user) return gate.open()
+    navigate('/file/' + f.id)
+  }
   const download = async (f: FileItem) => {
-    const outcome = await downloadFile(f, user?.id ?? null)
+    if (!user) return gate.open()
+    const outcome = await downloadFile(f, user.id)
     if (outcome === 'ok') showToast(t('file.downloadStarted', { title: f.title }))
     else if (outcome === 'no-binary') showToast(t('file.noBinary'))
     else if (outcome === 'denied') showToast(t('file.denied'))
@@ -165,17 +172,38 @@ export function DownloadCenter() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((f, i) => (
               <Reveal key={f.id} delay={i * 50}>
-                <FileCard file={f} locked={!isActiveMember} onOpen={openFile} onDownload={download} />
+                <FileCard file={f} locked={false} onOpen={openFile} onDownload={download} />
               </Reveal>
             ))}
           </div>
         ) : (
           <div className="flex flex-col gap-2.5">
             {list.map((f) => (
-              <FileListRow key={f.id} file={f} locked={!isActiveMember} onOpen={openFile} onDownload={download} />
+              <FileListRow key={f.id} file={f} locked={false} onOpen={openFile} onDownload={download} />
             ))}
           </div>
         )}
+
+        {/* contact note */}
+        <Reveal>
+          <div className="mt-10 flex items-start gap-4 p-5 rounded-[var(--radius-lg)] border border-line bg-surface">
+            <span className="grid place-items-center w-11 h-11 rounded-[var(--radius-md)] bg-tint text-accentStrong shrink-0">
+              <Icon name="mail" size={22} />
+            </span>
+            <div className="min-w-0">
+              <p className="font-semibold text-strong">{t('contact.heading')}</p>
+              <p className="text-sm text-body leading-relaxed mt-1">{t('contact.message')}</p>
+              <a
+                href={`mailto:${OWNER.email}`}
+                className="inline-flex items-center gap-1.5 mt-2.5 text-sm font-semibold text-accentStrong hover:underline latin"
+                dir="ltr"
+              >
+                <Icon name="mail" size={15} />
+                {OWNER.email}
+              </a>
+            </div>
+          </div>
+        </Reveal>
       </div>
 
       {/* transient toast */}

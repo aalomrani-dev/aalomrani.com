@@ -47,7 +47,13 @@ function DownloadPanel({ s }: { s: SectionDef }) {
       <ul className="space-y-2.5">
         {s.fileItems?.map((it) => (
           <li key={it.key} className="flex items-center gap-2.5 text-sm text-body">
-            <FileTypeChip type={it.ft} size="sm" />
+            {it.ft ? (
+              <FileTypeChip type={it.ft} size="sm" />
+            ) : (
+              <span className="shrink-0 text-faint" aria-hidden="true">
+                <Icon name="file" size={16} />
+              </span>
+            )}
             {t(`sections.download.fileItems.${it.key}`)}
           </li>
         ))}

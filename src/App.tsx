@@ -15,6 +15,7 @@ import { About } from '@/features/pages/About'
 import { Agency } from '@/features/pages/Agency'
 import { Placeholder } from '@/pages/Placeholder'
 import { LeadCaptureProvider } from '@/lib/leadCapture'
+import { FileGateProvider } from '@/features/file/FileGate'
 
 // Owner-only + auth routes are code-split to shrink the guest bundle.
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
@@ -25,13 +26,15 @@ const Admin = lazy(() => import('@/features/admin/Admin').then((m) => ({ default
 function AppLayout() {
   return (
     <LeadCaptureProvider>
-      <div className="min-h-svh flex flex-col bg-app">
-        <Header />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
+      <FileGateProvider>
+        <div className="min-h-svh flex flex-col bg-app">
+          <Header />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      </FileGateProvider>
     </LeadCaptureProvider>
   )
 }

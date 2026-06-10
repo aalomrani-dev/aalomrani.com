@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { AuthShell } from '@/features/auth/AuthShell'
 import { useAuth } from '@/lib/auth'
-import { ORG } from '@/data/content'
+import { ORG, isAllowedEmail } from '@/data/content'
 
 export function Signup() {
   const { t } = useTranslation()
@@ -24,10 +24,15 @@ export function Signup() {
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     if (busy) return
+    // Client-side org-domain gate for fast feedback — only @moe.gov.sa (ORG.domain).
+    // The authoritative gate is the server-side handle_new_user trigger (owner
+    // promotion + allowed_domains); we also surface its rejection below.
+    if (!isAllowedEmail(email, [ORG.domain])) {
+      setError(t('auth.signup.domainError', { domain: ORG.placeholder }))
+      return
+    }
     setBusy(true)
     setError(null)
-    // The org-domain gate + owner promotion are enforced server-side by the
-    // handle_new_user trigger; we surface its rejection rather than pre-checking.
     const { error, needsConfirmation } = await signUp(name, email, password)
     setBusy(false)
     if (error) {

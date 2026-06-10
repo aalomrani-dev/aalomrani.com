@@ -3,7 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { Icon } from '@/components/ui/Icon'
 import { Button } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
-import { OWNER, ABOUT_HIGHLIGHTS } from '@/data/content'
+import { OWNER } from '@/data/content'
+
+const INTERESTS = ['businessDev', 'processImprovement', 'digitalTransformation', 'knowledgeManagement', 'ai', 'institutionalDev'] as const
+const CREDENTIALS = ['pmp', 'cbpai'] as const
 
 export function About() {
   const navigate = useNavigate()
@@ -35,21 +38,47 @@ export function About() {
         <p className="text-muted mt-2">{t('owner.role')}</p>
       </Reveal>
 
-      <Reveal delay={120} className="mt-10 space-y-5 text-body leading-relaxed text-lg">
-        <p>{t('owner.bio1')}</p>
-        <p>{t('owner.bio2')}</p>
+      <Reveal delay={120} className="mt-10 text-body leading-relaxed text-lg">
+        <p>{t('owner.bioFull')}</p>
       </Reveal>
 
-      <Reveal delay={200} className="mt-10 grid gap-4 sm:grid-cols-3">
-        {ABOUT_HIGHLIGHTS.map((h) => (
-          <div key={h.key} className="p-5 rounded-[var(--radius-lg)] bg-surface border border-line text-center">
-            <span className="grid place-items-center w-11 h-11 rounded-[var(--radius-md)] bg-tint text-accentStrong mx-auto mb-3">
-              <Icon name={h.icon} size={22} />
+      {/* مجالات الاهتمام */}
+      <Reveal delay={200} className="mt-12">
+        <h2 className="flex items-center gap-2.5 font-display font-bold text-strong text-xl">
+          <span className="text-accentStrong"><Icon name="sparkles" size={20} /></span>
+          {t('about.interestsHeading')}
+        </h2>
+        <div className="mt-4 flex flex-wrap gap-2.5">
+          {INTERESTS.map((k) => (
+            <span
+              key={k}
+              className="inline-flex items-center gap-2 px-3.5 h-9 rounded-full bg-tint text-accentStrong text-sm font-medium border border-line"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden="true" />
+              {t(`about.interests.${k}`)}
             </span>
-            <p className="font-semibold text-strong">{t(`highlights.${h.key}.title`)}</p>
-            <p className="text-sm text-muted mt-1">{t(`highlights.${h.key}.sub`)}</p>
-          </div>
-        ))}
+          ))}
+        </div>
+      </Reveal>
+
+      {/* الاعتمادات المهنية */}
+      <Reveal delay={260} className="mt-10">
+        <h2 className="flex items-center gap-2.5 font-display font-bold text-strong text-xl">
+          <span className="text-accentStrong"><Icon name="shield" size={20} /></span>
+          {t('about.credentialsHeading')}
+        </h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {CREDENTIALS.map((k) => (
+            <div key={k} className="flex items-center gap-3 p-4 rounded-[var(--radius-lg)] bg-surface border border-line">
+              <span className="grid place-items-center w-10 h-10 rounded-[var(--radius-md)] bg-tint text-accentStrong shrink-0">
+                <Icon name="checkCircle" size={20} />
+              </span>
+              <span className="latin font-medium text-strong text-sm leading-snug" dir="ltr">
+                {t(`about.credentials.${k}`)}
+              </span>
+            </div>
+          ))}
+        </div>
       </Reveal>
 
       <Reveal delay={280} className="mt-12 flex flex-wrap justify-center gap-3">

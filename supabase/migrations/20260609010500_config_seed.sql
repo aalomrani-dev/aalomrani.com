@@ -12,7 +12,7 @@ on conflict (id) do nothing;
 -- Approved org domains: intentionally empty for now (operator decision 2026-06-09).
 -- With no enabled domains, ONLY the owner email above can sign up; every other
 -- address is rejected by handle_new_user until a domain is added here or via admin:
---   insert into public.allowed_domains (domain, enabled) values ('aalomrani.com', true);
+--   insert into public.allowed_domains (domain, enabled) values ('moe.gov.sa', true);
 
 -- Canonical categories (order mirrors content.ts CATEGORIES, minus the 'all' chip).
 insert into public.categories (label, sort_order) values
