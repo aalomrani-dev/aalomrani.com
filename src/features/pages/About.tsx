@@ -35,7 +35,6 @@ export function About() {
           {t('about.eyebrow')}
         </span>
         <h1 className="font-display font-bold text-strong text-4xl mt-2">{t('owner.name')}</h1>
-        <p className="text-muted mt-2">{t('owner.role')}</p>
       </Reveal>
 
       <Reveal delay={120} className="mt-10 text-body leading-relaxed text-lg">
