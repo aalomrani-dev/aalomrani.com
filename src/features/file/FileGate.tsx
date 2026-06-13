@@ -78,7 +78,10 @@ export function FileGateProvider({ children }: { children: ReactNode }) {
           <span className="mt-0.5 shrink-0 text-accentStrong">
             <Icon name="mail" size={18} />
           </span>
-          <span>{t('file.gateModal.message')}</span>
+          <span>
+            {t('file.gateModal.messagePre')}{' '}
+            <span dir="ltr" className="inline-block">{t('file.gateModal.messageDomain')}</span>
+          </span>
         </p>
       </Modal>
     </FileGateContext.Provider>

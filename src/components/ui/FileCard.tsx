@@ -19,7 +19,7 @@ export function FileCard({ file, locked = false, onOpen, onDownload }: FileCardP
   return (
     <div
       aria-label={locked ? t('a11y.fileLocked', { title: file.title }) : file.title}
-      className="group relative flex flex-col gap-3 p-5 rounded-[var(--radius-lg)] bg-surface border border-line overflow-hidden shadow-[var(--shadow-sm)] hover:-translate-y-[3px] hover:shadow-[var(--glow-teal)] focus-within:-translate-y-[3px] focus-within:shadow-[var(--glow-teal)] transition-[transform,box-shadow] duration-200"
+      className="group relative flex flex-col gap-3 p-5 rounded-[var(--radius-lg)] bg-surface border border-line overflow-hidden shadow-[var(--shadow-sm)] hover:-translate-y-[3px] hover:shadow-[var(--glow-teal)] focus-within:-translate-y-[3px] focus-within:shadow-[var(--glow-teal)] transition-[transform,box-shadow] duration-200 h-full"
       style={{ minHeight: 176 }}
     >
       {!locked && (

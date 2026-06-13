@@ -129,9 +129,9 @@ export function Library() {
                 onAction={() => setCat('all')}
               />
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2 items-stretch">
                 {list.map((f, i) => (
-                  <Reveal key={f.id} delay={i * 50}>
+                  <Reveal key={f.id} delay={i * 50} className="h-full">
                     <FileCard file={f} locked={false} onOpen={openFile} onDownload={download} />
                   </Reveal>
                 ))}
